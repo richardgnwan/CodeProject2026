@@ -1,0 +1,11 @@
+# Semantic Sentence API - Base Requirements
+#
+# MLC LLM must be installed separately (see README.md for instructions):
+#   GPU: pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
+#   CPU: pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-cpu mlc-ai-nightly-cpu
+#
+# Add your additional dependencies below (web framework, etc.)
+# Example:
+#   fastapi
+#   uvicorn
+#   sentence-transformers
