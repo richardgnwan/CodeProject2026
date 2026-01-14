@@ -230,6 +230,11 @@ Or run the provided setup script for guidance:
 
 ### Approach
 
+TLDR:
+1. Analyze the problem
+2. Brainstorm the idea and planning
+3. Implement
+
 **Architecture**: FastAPI application with a singleton LLM service pattern.
 
 **Semantic Grouping (Option A - LLM-Native)**:
@@ -250,7 +255,7 @@ Or run the provided setup script for guidance:
 ### Tradeoffs/Limitations
 
 - **LLM-based grouping**: Less deterministic than embedding-based approaches; results may vary between runs
-- **JSON parsing**: The LLM may occasionally produce malformed JSON; fallback returns all sentences in one group
+- **JSON parsing**: The LLM may occasionally produce malformed JSON; fallback returns all sentences in one group -> this one can be improved by using structured output (supported by some providers)
 - **Performance**: Each grouping request requires an LLM call; could be slow for large batches
 - **No caching**: Repeated identical requests trigger new LLM calls
 - **Single model**: Currently hardcoded to Qwen3-0.6B; could be made configurable
@@ -271,4 +276,4 @@ Or run the provided setup script for guidance:
 2. Cursor
 
 ### Issues
-1. Since my device does not have GPU, the time used for inference is very long.
+1. Since my current device does not have GPU, the time used for inference is very long.
