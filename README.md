@@ -178,20 +178,97 @@ Or run the provided setup script for guidance:
 **Please fill out this section before submitting:**
 
 ### How to Run
-<!-- Your instructions for running the solution -->
 
+1. **Install Poetry** (if not already installed):
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
+
+2. **Install MLC LLM** (choose based on your hardware):
+   ```bash
+   # GPU (NVIDIA CUDA):
+   pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
+   
+   # CPU only:
+   pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-cpu mlc-ai-nightly-cpu
+   
+   # macOS Apple Silicon:
+   pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
+   ```
+
+3. **Install git-lfs** (required for model downloads):
+   ```bash
+   # Ubuntu
+   sudo apt install git-lfs
+   git lfs install
+   ```
+
+4. **Install dependencies with Poetry**:
+   ```bash
+   poetry install
+   ```
+
+5. **Run the API server**:
+   ```bash
+   poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
+
+6. **Test the endpoints**:
+   ```bash
+   # Group sentences
+   curl -X POST http://localhost:8000/group-sentences \
+     -H "Content-Type: application/json" \
+     -d '{"sentences": ["The cat sat on the mat", "Dogs love to play fetch", "My feline friend enjoys napping"]}'
+   
+   # Synthesize paragraph
+   curl -X POST http://localhost:8000/synthesize \
+     -H "Content-Type: application/json" \
+     -d '{"sentences": ["The weather is sunny today", "I plan to go to the beach", "Swimming is my favorite activity"]}'
+   ```
+
+7. **API Documentation**: Visit http://localhost:8000/docs for interactive Swagger UI.
 
 ### Approach
-<!-- Your design decisions and how you solved the semantic grouping problem -->
 
+**Architecture**: FastAPI application with a singleton LLM service pattern.
+
+**Semantic Grouping (Option A - LLM-Native)**:
+- Used prompt engineering to have the LLM analyze and group sentences by semantic similarity
+- The prompt includes few-shot examples to ensure reliable JSON output format
+- Fallback handling for cases where the LLM response cannot be parsed
+
+**Paragraph Synthesis**:
+- Direct prompting asking the LLM to combine sentences into a coherent, flowing paragraph
+- System prompt guides the model to preserve meaning while creating natural text
+
+**Key Design Decisions**:
+- Singleton pattern for MLCEngine (expensive initialization)
+- Lifespan context manager for proper resource cleanup
+- Pydantic models for request/response validation
+- Comprehensive error handling with appropriate HTTP status codes
 
 ### Tradeoffs/Limitations
-<!-- What you'd improve with more time -->
 
+- **LLM-based grouping**: Less deterministic than embedding-based approaches; results may vary between runs
+- **JSON parsing**: The LLM may occasionally produce malformed JSON; fallback returns all sentences in one group
+- **Performance**: Each grouping request requires an LLM call; could be slow for large batches
+- **No caching**: Repeated identical requests trigger new LLM calls
+- **Single model**: Currently hardcoded to Qwen3-0.6B; could be made configurable
+
+**With more time, I would add**:
+- Configurable model selection via environment variables
+- Request caching for identical inputs
+- Batch processing optimization
+- More robust JSON extraction with multiple fallback strategies
+- Unit tests for the LLM service
 
 ### Time Spent
-<!-- Be honest! We value integrity over speed -->
+~1.5 hours
 
 
 ### AI Assistant Usage
-<!-- Did you use Claude, Copilot, ChatGPT, etc.? It's allowed, just disclose it -->
+1. Claude for brainstorming and planning
+2. Cursor
+
+### Issues
+1. Since my device does not have GPU, the time used for inference is very long.

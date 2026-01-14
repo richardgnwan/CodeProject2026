@@ -1,0 +1,12 @@
+# Semantic Sentence API - Dependencies
+#
+# MLC LLM must be installed separately (see README.md for instructions):
+#   GPU: pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
+#   CPU: pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly-cpu mlc-ai-nightly-cpu
+#
+# This project uses Poetry for dependency management (see pyproject.toml),
+# but this file is provided for compatibility.
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.10.0

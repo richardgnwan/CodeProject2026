@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "semantic-sentence-api"
+version = "0.1.0"
+description = "A FastAPI application for semantic sentence grouping and synthesis using MLC LLM"
+authors = ["Richard Gunawan <richardgunawan26@gmail.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
+pydantic = "^2.10.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
