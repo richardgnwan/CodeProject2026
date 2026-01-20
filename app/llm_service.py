@@ -61,7 +61,7 @@ class LLMService:
         try:
             self._engine = MLCEngine(self._model, device="auto")
         except Exception as e:
-            logger.error("Error initializing MLCEngine: %s", e)
+            logger.exception("Error initializing MLCEngine with device='auto', falling back to CPU")
             self._engine = MLCEngine(self._model, device="cpu")
         logger.info("MLCEngine initialized successfully")
 

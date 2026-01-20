@@ -40,8 +40,8 @@ async def lifespan(app: FastAPI):
     try:
         llm_service.initialize()
         logger.info("LLM service initialized successfully")
-    except Exception as e:
-        logger.error("Failed to initialize LLM service: %s", e)
+    except Exception:
+        logger.exception("Failed to initialize LLM service")
         raise
 
     yield
@@ -85,10 +85,13 @@ async def group_sentences(request: GroupSentencesRequest) -> GroupSentencesRespo
         logger.info("Successfully grouped sentences into %d groups", len(groups))
         return GroupSentencesResponse(groups=groups)
     except RuntimeError as e:
-        logger.error("LLM service error: %s", e)
+        logger.exception("LLM service error")
         raise HTTPException(status_code=503, detail="LLM service unavailable") from e
+    except ValueError as e:
+        logger.exception("Invalid input or parsing error")
+        raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}") from e
     except Exception as e:
-        logger.error("Unexpected error during sentence grouping: %s", e)
+        logger.exception("Unexpected error during sentence grouping")
         raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
@@ -118,10 +121,13 @@ async def synthesize(request: SynthesizeRequest) -> SynthesizeResponse:
         logger.info("Successfully synthesized paragraph")
         return SynthesizeResponse(paragraph=paragraph)
     except RuntimeError as e:
-        logger.error("LLM service error: %s", e)
+        logger.exception("LLM service error")
         raise HTTPException(status_code=503, detail="LLM service unavailable") from e
+    except ValueError as e:
+        logger.exception("Invalid input or parsing error")
+        raise HTTPException(status_code=400, detail=f"Invalid request: {str(e)}") from e
     except Exception as e:
-        logger.error("Unexpected error during synthesis: %s", e)
+        logger.exception("Unexpected error during synthesis")
         raise HTTPException(status_code=500, detail="Internal server error") from e
 
 
