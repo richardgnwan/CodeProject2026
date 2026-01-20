@@ -133,6 +133,7 @@ class LLMService:
         prompt = GROUPING_PROMPT_TEMPLATE.format(sentences_json=json.dumps(sentences))
 
         logger.debug("Sending grouping request to LLM")
+        # TODO: We can add response_format inside the `create` to utilize json mode
         response = engine.chat.completions.create(
             messages=[
                 {"role": "system", "content": GROUPING_SYSTEM_MESSAGE},
