@@ -92,22 +92,21 @@ class LLMService:
         Raises:
             ValueError: If JSON cannot be extracted or parsed.
         """
-        # Try to find JSON array in the response
-        # Look for pattern like [[...], [...], ...]
-        json_match = re.search(r"\[\s*\[.*?\]\s*\]", response_text, re.DOTALL)
-        if json_match:
-            try:
-                return json.loads(json_match.group())
-            except json.JSONDecodeError:
-                pass
-
-        # Try parsing the entire response as JSON
         try:
             result = json.loads(response_text)
             if isinstance(result, list):
                 return result
         except json.JSONDecodeError:
             pass
+
+        # If direct parsing fails, try regex to extract JSON from mixed text
+        # (e.g., when LLM adds explanations before/after the JSON)
+        json_match = re.search(r"\[\s*\[.*?\]\s*\]", response_text, re.DOTALL)
+        if json_match:
+            try:
+                return json.loads(json_match.group())
+            except json.JSONDecodeError:
+                pass
 
         raise ValueError(f"Could not extract valid JSON from response: {response_text}")
 
